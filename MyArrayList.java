@@ -1,63 +1,77 @@
-package com.tian.rebuild;
-
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class MyArrayList<E> {
 
 	private Object[] ele;
 	
+	private int defaultSize = 10;
+	
 	private int size;
 	
-	private static final int defaultSize =10;
+	private Object[] nullEle = {};
 	
-	
-	public MyArrayList(int capacity){
-		if(capacity<0){
-			throw new IllegalArgumentException("Êý×é³¤¶È²»ÄÜÐ¡ÓÚÁã");
-		}
-		ele = new Object[capacity];
+	public MyArrayList(int length){
+		ele = new Object[length];
 	}
 	
 	public MyArrayList(){
-		this(defaultSize);
+		ele = new Object[defaultSize];
 	}
 	
-	public boolean add(E e){
-		ensureCapacity(size+1);
+	public int size(){
+		return size;
+	}
+	
+	//å¾€æ•°ç»„åŽè¾¹æ‹¼æŽ¥ï¼Œä¹Ÿå¯ä»¥å‘ä¸­é—´æ’å…¥
+	public void add(E e){
+		//è¦åˆ¤æ–­æ•°ç»„æ˜¯å¦è¶Šç•Œ
+		if(size>=ele.length)
+			enlarge();
 		ele[size++] = e;
-		return true;
 	}
 	
-	private void ensureCapacity(int nowCapacity){
-		if(nowCapacity <= ele.length){
-			return ;
-		}else{
-			//µ±Ç°µÄÊý×éÒÑ¾­±¥ºÍ£¬ÐèÒªÀ©ÈÝ
-			int newCapacity = 2 * size;
-			ele = Arrays.copyOf(ele, newCapacity);
-		}
+	public void enlarge(){
+		System.out.println("æˆ‘æ‰©å®¹äº†");
+		//æ¯æ¬¡æ‰©å®¹ï¼Œå®¹é‡å˜ä¸ºä¹‹å‰çš„ä¸¤å€
+		ele = Arrays.copyOf(ele, ele.length*2);
 	}
 	
 	public E get(int index){
-		if(index<0||index>=size){
-			throw new IllegalArgumentException("²»ºÏ·¨µÄË÷Òý");
+		//è¦åˆ¤æ–­indexæ˜¯å¦è¶Šç•Œè¶…è¿‡sizeï¼ˆæ•°ç»„çš„é•¿åº¦ï¼‰
+		if(index >=size){
+			System.out.println("æˆ‘çš„å¼‚å¸¸");
+			throw new IndexOutOfBoundsException();
 		}
 		return (E)ele[index];
 	}
 	
-	public Ite iterator(){
+	public E remove(int index){
+		if(index < size){
+			E obj = (E)ele[index];
+			System.arraycopy(ele, index+1, ele, index, size-index-1);
+			ele[--size] = null;
+			return obj;
+		}else{
+			throw new IndexOutOfBoundsException();
+		}
+	}
+	
+	public Iterator itereator(){
 		return new Ite();
 	}
 	
-	private class Ite implements Iterator<E>{
+	private class Ite implements Iterator{
 		
 		private int curtor;
 		
+		
+		
 		@Override
 		public boolean hasNext() {
-			
-			return curtor < size;
+			// TODO Auto-generated method stub
+			return curtor<size;
 		}
 		
 		@Override
